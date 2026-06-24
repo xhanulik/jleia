@@ -1,0 +1,144 @@
+// SPDX-License-Identifier: BSD-3-Clause
+
+plugins {
+    id 'java-library'
+    id 'application'
+    id 'maven-publish'
+    id 'signing'
+}
+
+application {
+    mainClass = 'smartleia.LeiaMain'
+}
+
+// Thin JAR — only smartleia classes; consumers resolve transitive deps themselves.
+// This is the artifact referenced by library consumers (e.g. JCProfilerNext).
+jar {
+    manifest.attributes('Main-Class': 'smartleia.LeiaMain')
+}
+
+// Fat (standalone) JAR — bundles all runtime deps for direct execution.
+// Use: ./gradlew fatJar && java -jar build/libs/smartleia-java-*-all.jar
+tasks.register('fatJar', Jar) {
+    group = 'build'
+    description = 'Assembles a self-contained executable JAR with all runtime dependencies.'
+    archiveClassifier = 'all'
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from sourceSets.main.output
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    manifest.attributes('Main-Class': 'smartleia.LeiaMain')
+}
+
+group = 'io.github.xhanulik'
+version = '0.1.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    maven { url = "https://deadcode.me/mvn" }
+}
+
+dependencies {
+    // Serial port communication with the LEIA board over USB
+    api 'com.fazecast:jSerialComm:[2.0.0,3.0.0)'
+
+    // javax.smartcardio is part of the JDK — no explicit dependency needed
+
+    // logging API — consumers provide their own binding (log4j, logback, etc.)
+    api 'org.slf4j:slf4j-api:2.0.17'
+    // simple binding for the standalone fat-JAR / smoke-test only
+    runtimeOnly 'org.slf4j:slf4j-simple:2.0.17'
+
+    // apdu4j BIBO interface — used by LeiaBIBO for GPTool integration; provided by caller at runtime
+    compileOnly 'com.github.martinpaljak:apdu4j-core:2020b1'
+
+    // unit tests
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'smartleia-java'
+                description = 'Java driver for the LEIA smartcard board — a port of the Python smartleia library'
+                url = 'https://github.com/xhanulik/smartleia-java'
+
+                licenses {
+                    license {
+                        name = 'BSD 3-Clause License'
+                        url = 'https://opensource.org/licenses/BSD-3-Clause'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'xhanulik'
+                        name = 'Veronika Hanulikova'
+                        email = 'xhanulik@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/xhanulik/smartleia-java.git'
+                    developerConnection = 'scm:git:ssh://github.com/xhanulik/smartleia-java.git'
+                    url = 'https://github.com/xhanulik/smartleia-java'
+                }
+            }
+        }
+    }
+
+    repositories {
+        // GitHub Packages
+        maven {
+            name = 'GitHubPackages'
+            url = uri('https://maven.pkg.github.com/xhanulik/smartleia-java')
+            credentials {
+                username = project.findProperty('gpr.user') ?: System.getenv('GITHUB_ACTOR')
+                password = project.findProperty('gpr.key') ?: System.getenv('GITHUB_TOKEN')
+            }
+        }
+        // Maven Central (via OSSRH / Sonatype)
+        maven {
+            name = 'OSSRH'
+            url = version.endsWith('SNAPSHOT')
+                ? 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+                : 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username = project.findProperty('ossrh.user') ?: System.getenv('OSSRH_USER')
+                password = project.findProperty('ossrh.password') ?: System.getenv('OSSRH_PASSWORD')
+            }
+        }
+    }
+}
+
+signing {
+    // Only required for Maven Central; skip locally unless -Psign is passed
+    required { project.hasProperty('sign') }
+    sign publishing.publications.mavenJava
+}
