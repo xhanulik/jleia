@@ -67,6 +67,11 @@ dependencies {
 
     // javax.smartcardio is part of the JDK — no explicit dependency needed
 
+    // logging API — consumers provide their own binding (log4j, logback, etc.)
+    api 'org.slf4j:slf4j-api:2.0.17'
+    // simple binding for the standalone fat-JAR / smoke-test only
+    runtimeOnly 'org.slf4j:slf4j-simple:2.0.17'
+
     // apdu4j BIBO interface — used by LeiaBIBO for GPTool integration; provided by caller at runtime
     compileOnly 'com.github.martinpaljak:apdu4j-core:2020b1'
 
