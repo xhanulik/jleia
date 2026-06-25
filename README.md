@@ -38,10 +38,12 @@ java -jar build/libs/smartleia-java-*.jar [AID-hex [APDU-hex]]
 ```java
 TargetController tc = new TargetController();
 tc.open();
-tc.configureSmartcard(ConfigureSmartcardCommand.T.T1, 0, 0, true, true);
+tc.configureSmartcard(Protocol.T1, 0, 0, true, true);
 
 ATR atr = tc.getATR();
 System.out.println(atr.normalized()); // ISO 7816 ATR hex string
+System.out.printf("Protocol T=%d, clock %d kHz%n",
+        atr.getProtocol(), atr.getMaxFrequencyHz() / 1000);
 
 ResponseAPDU response = tc.sendAPDU(new CommandAPDU(0x00, 0xA4, 0x04, 0x00, aid));
 System.out.printf("SW: %04X, round-trip: %d µs%n",

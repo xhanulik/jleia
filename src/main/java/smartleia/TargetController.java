@@ -290,18 +290,20 @@ public class TargetController {
      * @param negotiateBaudrate whether to negotiate baud rate
      * @implNote LEIA.configure_smartcard
      */
-    public void configureSmartcard(ConfigureSmartcardCommand.T protocolToUse,
+    public void configureSmartcard(Protocol protocolToUse,
                                    int ETUToUse, int freqToUse,
                                    boolean negotiatePts, boolean negotiateBaudrate) {
         isValidPort();
         if (!isCardInserted()) {
             throw new RuntimeException("configureSmartcard: no card inserted.");
         }
-
+        if (protocolToUse == null) {
+            protocolToUse = Protocol.T1;
+        }
         // FIXME: Python configure_smartcard() retries with AUTO protocol when
         //        explicit PTS negotiation fails; this implementation does not retry.
-        if (protocolToUse == null) {
-            protocolToUse = ConfigureSmartcardCommand.T.T1;
+        if (protocolToUse == Protocol.AUTO) {
+            throw new IllegalArgumentException("Protocol.AUTO is not supported; specify T0 or T1 explicitly.");
         }
 
         synchronized (lock) {
