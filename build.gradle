@@ -67,6 +67,9 @@ dependencies {
 
     // javax.smartcardio is part of the JDK — no explicit dependency needed
 
+    // apdu4j BIBO interface — used by LeiaBIBO for GPTool integration; provided by caller at runtime
+    compileOnly 'com.github.martinpaljak:apdu4j-core:2020b1'
+
     // unit tests
     testImplementation 'org.junit.jupiter:junit-jupiter:5.12.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
