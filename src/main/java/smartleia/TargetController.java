@@ -17,13 +17,19 @@ package smartleia;
 
 import com.fazecast.jSerialComm.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Objects;
 
 public class TargetController {
+    private static final Logger log = LoggerFactory.getLogger(TargetController.class);
+
     private static final int RESPONSE_LEN_SIZE = 4;
     private static final int COMMAND_LEN_SIZE = 4;
     private static final int USB_VID = 0x3483;
@@ -70,8 +76,9 @@ public class TargetController {
                     continue;
                 }
                 serialPort = port;
-                System.out.printf("Serial port %s (%04X/%04X) is open and ready%n",
-                        serialPort.getDescriptivePortName(), USB_VID, USB_PID);
+                log.info("Serial port {} ({}/{}) is open and ready.",
+                        serialPort.getDescriptivePortName(),
+                        String.format("%04X", USB_VID), String.format("%04X", USB_PID));
 
                 drainBuffer();
                 testWaitingFlag();
@@ -422,8 +429,9 @@ public class TargetController {
      */
     public void close() {
         if (serialPort != null && serialPort.isOpen()) {
-            System.out.printf("Closing serial port %s (%04X/%04X)%n",
-                    serialPort.getDescriptivePortName(), USB_VID, USB_PID);
+            log.info("Closing serial port {} ({}/{}).",
+                    serialPort.getDescriptivePortName(),
+                    String.format("%04X", USB_VID), String.format("%04X", USB_PID));
             serialPort.closePort();
             serialPort = null;
         }
