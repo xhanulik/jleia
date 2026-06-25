@@ -49,13 +49,13 @@ public class LeiaMain {
 
         // Step 3 — configure (T=1, negotiate ETU/frequency automatically)
         System.out.println("[3] Configuring smartcard (T=1, auto ETU/freq, negotiate PTS)...");
-        tc.configureSmartcard(ConfigureSmartcardCommand.T.T1, 0, 0, true, true);
+        tc.configureSmartcard(Protocol.T1, 0, 0, true, true);
 
         // Step 4 — read ATR
         System.out.println("[4] Reading ATR...");
         ATR atr = tc.getATR();
-        System.out.printf("    Protocol  : T=%d%n", atr.tProtocolCurr);
-        System.out.printf("    Clock freq: %d kHz%n", atr.fMaxCurr / 1000);
+        System.out.printf("    Protocol  : T=%d%n", atr.getProtocol());
+        System.out.printf("    Clock freq: %d kHz%n", atr.getMaxFrequencyHz() / 1000);
         System.out.printf("    ATR (hex) : %s%n", atr.normalized());
 
         // Step 5 — optionally SELECT an applet

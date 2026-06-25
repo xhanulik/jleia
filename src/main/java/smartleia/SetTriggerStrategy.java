@@ -16,7 +16,7 @@ package smartleia;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class SetTriggerStrategy extends DataStructure {
+class SetTriggerStrategy extends DataStructure {
     // TRIG_PRE_SEND_APDU = TRIG_PRE_SEND_APDU_SHORT_T0 | TRIG_PRE_SEND_APDU_FRAGMENTED_T0 | TRIG_PRE_SEND_APDU_T1
     private static final int TRIG_PRE_SEND_APDU = 0x1C;
     private static final int TRIGGER_DEPTH = 10;
@@ -42,7 +42,7 @@ public class SetTriggerStrategy extends DataStructure {
     }
 
     @Override
-    public void unpack(byte[] buffer) {
+    void unpack(byte[] buffer) {
         // FIXME: Implement missing method
     }
 }

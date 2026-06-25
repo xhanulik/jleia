@@ -31,9 +31,19 @@ public class ATR extends DataStructure {
     private byte tckPresent = 0;
     private int dICurr = 0;
     private int fICurr = 0;
-    public int fMaxCurr = 0;
-    public byte tProtocolCurr = 0;
+    private int fMaxCurr = 0;
+    private byte tProtocolCurr = 0;
     private byte ifsc = 0;
+
+    /** Returns the negotiated protocol number (1 = T=0, 2 = T=1). */
+    public int getProtocol() {
+        return tProtocolCurr & 0xFF;
+    }
+
+    /** Returns the maximum ISO 7816 clock frequency supported by the card, in Hz. */
+    public int getMaxFrequencyHz() {
+        return fMaxCurr;
+    }
 
     /**
      * Reconstructs the standard ISO 7816 ATR byte sequence from the parsed fields,
@@ -68,13 +78,13 @@ public class ATR extends DataStructure {
     }
 
     @Override
-    public byte[] pack() {
+    byte[] pack() {
         // FIXME: Implement missing method
         return new byte[0];
     }
 
     @Override
-    public void unpack(byte[] data) {
+    void unpack(byte[] data) {
         ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
         this.ts = buffer.get();
         this.t0 = buffer.get();

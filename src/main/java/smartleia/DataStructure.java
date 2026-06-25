@@ -13,7 +13,7 @@
 
 package smartleia;
 
-public abstract class DataStructure {
-    public abstract byte[] pack();
-    public abstract void unpack(byte[] buffer);
+abstract class DataStructure {
+    abstract byte[] pack();
+    abstract void unpack(byte[] buffer);
 }

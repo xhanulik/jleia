@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-public class APDU extends DataStructure {
+class APDU extends DataStructure {
 
     private final byte cla;
     private final byte ins;
@@ -62,7 +62,7 @@ public class APDU extends DataStructure {
     }
 
     @Override
-    public void unpack(byte[] buffer) {
+    void unpack(byte[] buffer) {
         // FIXME: Implement missing method
     }
 }

@@ -17,7 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-public class RESP extends DataStructure {
+class RESP extends DataStructure {
     private int le;
     private byte sw1;
     private byte sw2;
@@ -48,7 +48,7 @@ public class RESP extends DataStructure {
     }
 
     @Override
-    public void unpack(byte[] data) {
+    void unpack(byte[] data) {
         ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
         this.le = buffer.getInt();
         this.sw1 = buffer.get();
