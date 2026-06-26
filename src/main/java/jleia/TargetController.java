@@ -27,6 +27,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Objects;
 
+/**
+ * Controls a LEIA smartcard board connected over USB serial.
+ * Call {@link #open()} to establish the connection, then use
+ * {@link #configureSmartcard} and {@link #sendAPDU} for card interaction.
+ * All public methods require an open connection; concurrent calls are serialised.
+ */
 public class TargetController {
     private static final Logger log = LoggerFactory.getLogger(TargetController.class);
 
@@ -44,8 +50,7 @@ public class TargetController {
      * Try to detect connected LEIA board and open serial port for communication.
      *
      * @return true if successfully opened, false if no board found (caller may retry)
-     * @implNote LEIA.open, originally implemented in
-     *           https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py
+     * @see "Python: LEIA.open (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     public boolean open() {
         // Collect only matching ports first, mirroring Python's possible_ports list
@@ -96,6 +101,10 @@ public class TargetController {
         return false;
     }
 
+    /**
+     * Throws a RuntimeException if no serial port is open.
+     * Called as a guard at the start of every method that requires a connection.
+     */
     private void isValidPort() {
         if (serialPort == null || !serialPort.isOpen()) {
             throw new RuntimeException("No serial connection created!");
@@ -130,6 +139,11 @@ public class TargetController {
         }
     }
 
+    /**
+     * Sleeps for the given number of milliseconds, restoring the interrupt flag if interrupted.
+     *
+     * @param ms duration to sleep in milliseconds
+     */
     private void sleep(int ms) {
         try {
             Thread.sleep(ms);
@@ -141,7 +155,7 @@ public class TargetController {
     /**
      * Verify the board is in the 'waiting' state before issuing a command.
      *
-     * @implNote LEIA._testWaitingFlag
+     * @see "Python: LEIA._testWaitingFlag (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     private void testWaitingFlag() {
         isValidPort();
@@ -171,7 +185,7 @@ public class TargetController {
     /**
      * Read and validate the status byte(s) returned after every command.
      *
-     * @implNote LEIA._checkStatus
+     * @see "Python: LEIA._checkStatus (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     private void checkStatus() {
         isValidPort();
@@ -212,7 +226,7 @@ public class TargetController {
     /**
      * Read and validate the acknowledge byte returned after every command.
      *
-     * @implNote LEIA._checkAck
+     * @see "Python: LEIA._checkAck (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     private void checkAck() {
         isValidPort();
@@ -229,7 +243,7 @@ public class TargetController {
      *
      * @param command 1-byte command identifier
      * @param struct  payload to pack, or {@code null} for a zero-length payload
-     * @implNote LEIA._send_command
+     * @see "Python: LEIA._send_command (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     private void sendCommand(byte[] command, DataStructure struct) {
         isValidPort();
@@ -254,7 +268,7 @@ public class TargetController {
     /**
      * Read the 4-byte little-endian response-length prefix.
      *
-     * @implNote LEIA._read_response_size
+     * @see "Python: LEIA._read_response_size (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     private int readResponseSize() {
         isValidPort();
@@ -270,7 +284,7 @@ public class TargetController {
      * Tests whether a smartcard is currently inserted into the LEIA board.
      *
      * @return {@code true} if a card is present
-     * @implNote LEIA.is_card_inserted
+     * @see "Python: LEIA.is_card_inserted (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     public boolean isCardInserted() {
         isValidPort();
@@ -295,7 +309,7 @@ public class TargetController {
      * @param freqToUse     frequency in Hz; 0 to let the board negotiate
      * @param negotiatePts  whether to perform PTS negotiation
      * @param negotiateBaudrate whether to negotiate baud rate
-     * @implNote LEIA.configure_smartcard
+     * @see "Python: LEIA.configure_smartcard (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     public void configureSmartcard(Protocol protocolToUse,
                                    int ETUToUse, int freqToUse,
@@ -329,7 +343,7 @@ public class TargetController {
      * Reads the Answer-to-Reset from the card.
      *
      * @return parsed {@link ATR} structure
-     * @implNote LEIA.get_ATR
+     * @see "Python: LEIA.get_ATR (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     public ATR getATR() {
         isValidPort();
@@ -350,7 +364,7 @@ public class TargetController {
     /**
      * Resets all trigger strategies to none (no trigger).
      *
-     * @implNote LEIA.set_trigger_strategy(1, point_list=[], delay=0)
+     * @see "Python: LEIA.set_trigger_strategy(1, point_list=[], delay=0) (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     public void resetTriggerStrategy() {
         // FIXME: Python set_trigger_strategy() accepts an arbitrary SID (strategy bank 0-3),
@@ -365,7 +379,7 @@ public class TargetController {
     /**
      * Activates the pre-send-APDU trigger strategy on bank 1.
      *
-     * @implNote LEIA.set_trigger_strategy(1, point_list=[TriggerPoints.TRIG_PRE_SEND_APDU], delay=0)
+     * @see "Python: LEIA.set_trigger_strategy(1, point_list=[TriggerPoints.TRIG_PRE_SEND_APDU], delay=0) (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     public void setPreSendAPDUTriggerStrategy() {
         // FIXME: see resetTriggerStrategy() — same limitations apply.
@@ -381,7 +395,7 @@ public class TargetController {
      *
      * @param commandApdu the APDU to transmit
      * @return the card's response
-     * @implNote LEIA.send_APDU
+     * @see "Python: LEIA.send_APDU (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     public ResponseAPDU sendAPDU(CommandAPDU commandApdu) {
         isValidPort();
@@ -425,7 +439,7 @@ public class TargetController {
     /**
      * Closes the serial port connection to the LEIA board.
      *
-     * @implNote LEIA.close (via serial.Serial.close)
+     * @see "Python: LEIA.close (via serial.Serial.close) (https://github.com/cw-leia/smartleia/blob/master/smartleia/__init__.py)"
      */
     public void close() {
         if (serialPort != null && serialPort.isOpen()) {

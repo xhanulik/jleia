@@ -17,6 +17,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 
+/**
+ * Answer-to-Reset structure returned by the LEIA board after card activation.
+ * Parsed from the 55-byte binary payload sent by the board firmware.
+ */
 public class ATR extends DataStructure {
     private byte ts = 0;
     private byte t0 = 0;
@@ -35,12 +39,20 @@ public class ATR extends DataStructure {
     private byte tProtocolCurr = 0;
     private byte ifsc = 0;
 
-    /** Returns the negotiated protocol number (1 = T=0, 2 = T=1). */
+    /**
+     * Returns the negotiated protocol number (1 = T=0, 2 = T=1).
+     *
+     * @return protocol number
+     */
     public int getProtocol() {
         return tProtocolCurr & 0xFF;
     }
 
-    /** Returns the maximum ISO 7816 clock frequency supported by the card, in Hz. */
+    /**
+     * Returns the maximum ISO 7816 clock frequency supported by the card, in Hz.
+     *
+     * @return maximum clock frequency in Hz
+     */
     public int getMaxFrequencyHz() {
         return fMaxCurr;
     }
@@ -104,6 +116,12 @@ public class ATR extends DataStructure {
         this.ifsc = buffer.get();
     }
 
+    /**
+     * Converts a byte array to an uppercase hex string with no separators.
+     *
+     * @param bytes input bytes
+     * @return hex string
+     */
     private static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
         for (byte b : bytes)

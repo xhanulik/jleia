@@ -17,6 +17,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+/**
+ * Response structure returned by the board after an APDU exchange.
+ * Contains the card's response data, status words, and timing measurements.
+ */
 class RESP extends DataStructure {
     private int le;
     private byte sw1;
@@ -35,6 +39,11 @@ class RESP extends DataStructure {
         return deltaTAnswer;
     }
 
+    /**
+     * Serialises this response into the board's binary format.
+     *
+     * @return packed byte array
+     */
     @Override
     public byte[] pack() {
         ByteBuffer buffer = ByteBuffer.allocate(14 + this.data.length).order(ByteOrder.LITTLE_ENDIAN);
@@ -47,6 +56,11 @@ class RESP extends DataStructure {
         return buffer.array();
     }
 
+    /**
+     * Deserialises a binary payload from the board into this response's fields.
+     *
+     * @param data raw bytes from the board (minimum 14 bytes)
+     */
     @Override
     void unpack(byte[] data) {
         ByteBuffer buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
@@ -58,6 +72,12 @@ class RESP extends DataStructure {
         this.data = Arrays.copyOfRange(data, 14, data.length);
     }
 
+    /**
+     * Returns the card's response as a flat byte array suitable for constructing a
+     * {@link javax.smartcardio.ResponseAPDU}: response data followed by SW1 and SW2.
+     *
+     * @return response data bytes concatenated with the two status bytes
+     */
     public byte[] toArray() {
         byte[] result = new byte[data.length + 2];
         System.arraycopy(data, 0, result, 0, data.length);

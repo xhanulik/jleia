@@ -13,7 +13,24 @@
 
 package jleia;
 
+/**
+ * Base class for all binary structures exchanged with the LEIA board firmware.
+ * Subclasses implement {@link #pack()} for host-to-board serialisation and
+ * {@link #unpack(byte[])} for board-to-host deserialisation.
+ */
 abstract class DataStructure {
+
+    /**
+     * Serialises this structure into the binary format expected by the board.
+     *
+     * @return packed byte array
+     */
     abstract byte[] pack();
+
+    /**
+     * Deserialises a binary payload received from the board into this structure's fields.
+     *
+     * @param buffer raw bytes from the board
+     */
     abstract void unpack(byte[] buffer);
 }

@@ -16,6 +16,11 @@ package jleia;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+/**
+ * Command payload for setting a trigger strategy on the LEIA board.
+ * Always targets strategy bank 1; either clears all trigger points or arms
+ * the pre-send-APDU trigger point.
+ */
 class SetTriggerStrategy extends DataStructure {
     // TRIG_PRE_SEND_APDU = TRIG_PRE_SEND_APDU_SHORT_T0 | TRIG_PRE_SEND_APDU_FRAGMENTED_T0 | TRIG_PRE_SEND_APDU_T1
     private static final int TRIG_PRE_SEND_APDU = 0x1C;
@@ -25,10 +30,21 @@ class SetTriggerStrategy extends DataStructure {
 
     private final boolean reset;
 
+    /**
+     * Constructs a trigger strategy command.
+     *
+     * @param toReset {@code true} to clear all trigger points (reset strategy),
+     *                {@code false} to arm the pre-send-APDU trigger point
+     */
     public SetTriggerStrategy(boolean toReset) {
         this.reset = toReset;
     }
 
+    /**
+     * Serialises the trigger strategy into the 207-byte little-endian format expected by the board.
+     *
+     * @return packed byte array
+     */
     @Override
     public byte[] pack() {
         ByteBuffer buf = ByteBuffer.allocate(PACKED_SIZE).order(ByteOrder.LITTLE_ENDIAN);

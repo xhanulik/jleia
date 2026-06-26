@@ -17,6 +17,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+/**
+ * ISO 7816 command APDU payload sent to the LEIA board.
+ * Serialises the APDU fields into the little-endian binary format expected by the board firmware.
+ */
 class APDU extends DataStructure {
 
     private final byte cla;
@@ -30,6 +34,16 @@ class APDU extends DataStructure {
 
     private static final int MAX_APDU_PAYLOAD_SIZE = 16384;
 
+    /**
+     * Constructs a command APDU with the given header bytes and optional data field.
+     * Data longer than {@code MAX_APDU_PAYLOAD_SIZE} is silently truncated.
+     *
+     * @param cla  class byte
+     * @param ins  instruction byte
+     * @param p1   parameter 1
+     * @param p2   parameter 2
+     * @param data command data field, or {@code null} for no data
+     */
     public APDU(byte cla, byte ins, byte p1, byte p2, byte[] data) {
         this.cla = cla;
         this.ins = ins;
@@ -47,6 +61,11 @@ class APDU extends DataStructure {
         }
     }
 
+    /**
+     * Serialises this APDU into the binary format expected by the board firmware.
+     *
+     * @return packed byte array
+     */
     @Override
     public byte[] pack() {
         ByteBuffer buffer = ByteBuffer.allocate(11 + this.lc).order(ByteOrder.LITTLE_ENDIAN);

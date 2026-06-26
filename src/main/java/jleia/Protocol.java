@@ -28,6 +28,11 @@ public enum Protocol {
         this.value = value;
     }
 
+    /**
+     * Returns the byte value sent to the board firmware for this protocol.
+     *
+     * @return firmware protocol byte
+     */
     byte value() {
         return value;
     }

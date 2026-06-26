@@ -16,10 +16,22 @@ import javax.smartcardio.CommandAPDU;
 public class LeiaBIBO implements BIBO {
     private final TargetController targetController;
 
+    /**
+     * Constructs a {@link LeiaBIBO} wrapping the given controller.
+     *
+     * @param targetController an already-connected {@link TargetController} instance
+     */
     public LeiaBIBO(TargetController targetController) {
         this.targetController = targetController;
     }
 
+    /**
+     * Sends a raw APDU to the card via the LEIA board and returns the raw response bytes.
+     *
+     * @param apduBytes raw command APDU bytes
+     * @return raw response bytes including status word
+     * @throws BIBOException if the APDU exchange fails
+     */
     @Override
     public byte[] transceive(byte[] apduBytes) throws BIBOException {
         try {
@@ -29,6 +41,9 @@ public class LeiaBIBO implements BIBO {
         }
     }
 
+    /**
+     * Closes the underlying serial connection to the LEIA board.
+     */
     @Override
     public void close() {
         targetController.close();

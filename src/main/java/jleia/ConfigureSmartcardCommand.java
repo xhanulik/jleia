@@ -16,6 +16,10 @@ package jleia;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+/**
+ * Command payload sent to the board to configure smartcard communication parameters.
+ * Serialises to the 11-byte little-endian format expected by the firmware's 'c' command.
+ */
 class ConfigureSmartcardCommand extends DataStructure {
     private final byte protocol;
     private final int etu;
@@ -23,6 +27,15 @@ class ConfigureSmartcardCommand extends DataStructure {
     private final byte negotiatePts;
     private final byte negotiateBaudrate;
 
+    /**
+     * Constructs a configure-smartcard command with the given parameters.
+     *
+     * @param protocol          protocol byte from {@link Protocol#value()}
+     * @param etu               ETU value; 0 to let the board negotiate
+     * @param freq              clock frequency in Hz; 0 to let the board negotiate
+     * @param negotiatePts      whether to perform PTS negotiation
+     * @param negotiateBaudrate whether to negotiate baud rate
+     */
     ConfigureSmartcardCommand(
             byte protocol,
             int etu,
