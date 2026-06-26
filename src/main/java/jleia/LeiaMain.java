@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Veronika Hanulikova <xhanulik@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package smartleia;
+package jleia;
 
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
@@ -11,17 +11,17 @@ import javax.smartcardio.ResponseAPDU;
  * an applet and send a custom APDU, then disconnect.
  *
  * Usage:
- *   java -cp smartleia-java.jar smartleia.LeiaMain [AID-hex [APDU-hex]]
+ *   java -cp jleia.jar smartleia.LeiaMain [AID-hex [APDU-hex]]
  *
  * Examples:
  *   # Connect + ATR only
- *   java -jar smartleia-java.jar
+ *   java -jar jleia.jar
  *
  *   # Connect, SELECT applet, read ATR
- *   java -jar smartleia-java.jar A0000000031010
+ *   java -jar jleia.jar A0000000031010
  *
  *   # Connect, SELECT applet, send a custom APDU
- *   java -jar smartleia-java.jar A0000000031010 00A4040007A0000000031010
+ *   java -jar jleia.jar A0000000031010 00A4040007A0000000031010
  */
 public class LeiaMain {
 

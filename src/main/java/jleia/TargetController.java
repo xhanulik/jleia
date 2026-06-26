@@ -13,7 +13,7 @@
  * Modifications and translation by Veronika Hanulikova.
  */
 
-package smartleia;
+package jleia;
 
 import com.fazecast.jSerialComm.*;
 

@@ -1,4 +1,4 @@
-# smartleia-java
+# jleia
 
 Java driver for the [LEIA smartcard board](https://github.com/cw-leia/leia-hardware),
 a port of the Python [smartleia](https://github.com/cw-leia/smartleia) library.
@@ -30,7 +30,7 @@ Or build a fat JAR and run directly:
 
 ```bash
 ./gradlew jar
-java -jar build/libs/smartleia-java-*.jar [AID-hex [APDU-hex]]
+java -jar build/libs/jleia-*.jar [AID-hex [APDU-hex]]
 ```
 
 ## Usage as a library

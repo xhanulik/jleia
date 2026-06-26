@@ -11,7 +11,7 @@
  * Modifications and translation by Veronika Hanulikova.
  */
 
-package smartleia;
+package jleia;
 
 /** ISO 7816 communication protocol to use when configuring the smartcard. */
 public enum Protocol {

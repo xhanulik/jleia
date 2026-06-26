@@ -7,18 +7,21 @@ plugins {
     id 'signing'
 }
 
+group = 'io.github.xhanulik'
+version = '0.1.0'
+
 application {
-    mainClass = 'smartleia.LeiaMain'
+    mainClass = 'jleia.LeiaMain'
 }
 
-// Thin JAR — only smartleia classes; consumers resolve transitive deps themselves.
+// Thin JAR — only jleia classes; consumers resolve transitive deps themselves.
 // This is the artifact referenced by library consumers (e.g. JCProfilerNext).
 jar {
-    manifest.attributes('Main-Class': 'smartleia.LeiaMain')
+    manifest.attributes('Main-Class': 'jleia.LeiaMain')
 }
 
 // Fat (standalone) JAR — bundles all runtime deps for direct execution.
-// Use: ./gradlew fatJar && java -jar build/libs/smartleia-java-*-all.jar
+// Use: ./gradlew fatJar && java -jar build/libs/jleia-*-all.jar
 tasks.register('fatJar', Jar) {
     group = 'build'
     description = 'Assembles a self-contained executable JAR with all runtime dependencies.'
@@ -29,25 +32,8 @@ tasks.register('fatJar', Jar) {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
-    manifest.attributes('Main-Class': 'smartleia.LeiaMain')
+    manifest.attributes('Main-Class': 'jleia.LeiaMain')
 }
-
-group = 'io.github.xhanulik'
-application {
-    mainClass = 'smartleia.LeiaMain'
-}
-
-jar {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
-    manifest.attributes('Main-Class': 'smartleia.LeiaMain')
-}
-
-group = 'io.github.xhanulik'
-version = '0.1.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -99,9 +85,9 @@ publishing {
             from components.java
 
             pom {
-                name = 'smartleia-java'
-                description = 'Java driver for the LEIA smartcard board — a port of the Python smartleia library'
-                url = 'https://github.com/xhanulik/smartleia-java'
+                name = 'jleia'
+                description = 'Java driver for the LEIA smartcard board'
+                url = 'https://github.com/xhanulik/jleia'
 
                 licenses {
                     license {
@@ -119,9 +105,9 @@ publishing {
                 }
 
                 scm {
-                    connection = 'scm:git:git://github.com/xhanulik/smartleia-java.git'
-                    developerConnection = 'scm:git:ssh://github.com/xhanulik/smartleia-java.git'
-                    url = 'https://github.com/xhanulik/smartleia-java'
+                    connection = 'scm:git:git://github.com/xhanulik/jleia.git'
+                    developerConnection = 'scm:git:ssh://github.com/xhanulik/jleia.git'
+                    url = 'https://github.com/xhanulik/jleia'
                 }
             }
         }
@@ -131,7 +117,7 @@ publishing {
         // GitHub Packages
         maven {
             name = 'GitHubPackages'
-            url = uri('https://maven.pkg.github.com/xhanulik/smartleia-java')
+            url = uri('https://maven.pkg.github.com/xhanulik/jleia')
             credentials {
                 username = project.findProperty('gpr.user') ?: System.getenv('GITHUB_ACTOR')
                 password = project.findProperty('gpr.key') ?: System.getenv('GITHUB_TOKEN')

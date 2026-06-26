@@ -11,7 +11,7 @@
  * Modifications and translation by Veronika Hanulikova.
  */
 
-package smartleia;
+package jleia;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

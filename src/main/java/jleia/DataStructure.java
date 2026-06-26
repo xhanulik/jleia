@@ -11,7 +11,7 @@
  * Modifications and translation by Veronika Hanulikova.
  */
 
-package smartleia;
+package jleia;
 
 abstract class DataStructure {
     abstract byte[] pack();

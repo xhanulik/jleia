@@ -6,7 +6,7 @@
  * allowing tools like GlobalPlatformPro to perform card I/O through the LEIA board.
  */
 
-package smartleia;
+package jleia;
 
 import apdu4j.BIBO;
 import apdu4j.BIBOException;
