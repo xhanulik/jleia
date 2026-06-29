@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2019 The LEIA Team <leia@ssi.gouv.fr>
 // SPDX-FileCopyrightText: 2025-2026 Veronika Hanulikova <xhanulik@gmail.com>
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: LGPL-2.1-or-later
 
 /**
  * This file is a derivative work based on code from the SmartLEIA project,
  * originally developed by the LEIA Team (https://github.com/cw-leia/smartleia),
- * and licensed under the BSD 3-Clause License.
+ * and licensed under the LGPL-2.1-or-later License.
  *
- * Original code licensed under the BSD 3-Clause License:
+ * Original code licensed under LGPL-2.1-or-later:
  * Copyright (c) 2019, The LEIA Team <leia@ssi.gouv.fr>
  *
  * Modifications and translation by Veronika Hanulikova.

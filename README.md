@@ -74,7 +74,7 @@ Several features from the Python `smartleia` library are not yet implemented:
 
 ## License
 
-BSD 3-Clause License — see [LICENSE](LICENSE).
+GNU Lesser General Public License v2.1 or later — see [LICENSE](LICENSE).
 
 Derived from the [SmartLEIA](https://github.com/cw-leia/smartleia) project
-by The LEIA Team, also under BSD 3-Clause.
+by The LEIA Team (LGPL-2.1-or-later / BSD-3-Clause).
