@@ -402,7 +402,7 @@ public class TargetController {
         APDU apdu = new APDU(
                 (byte) commandApdu.getCLA(), (byte) commandApdu.getINS(),
                 (byte) commandApdu.getP1(), (byte) commandApdu.getP2(),
-                commandApdu.getData());
+                commandApdu.getData(), commandApdu.getNe());
         ResponseAPDU responseApdu;
         synchronized (lock) {
             sendCommand("a".getBytes(), apdu);

@@ -34,22 +34,23 @@ class APDU extends DataStructure {
     private static final int MAX_APDU_PAYLOAD_SIZE = 16384;
 
     /**
-     * Constructs a command APDU with the given header bytes and optional data field.
-     * Data longer than {@code MAX_APDU_PAYLOAD_SIZE} is silently truncated.
+     * Constructs a command APDU with the given header bytes, optional data field, and expected
+     * response length. Data longer than {@code MAX_APDU_PAYLOAD_SIZE} is silently truncated.
      *
      * @param cla  class byte
      * @param ins  instruction byte
      * @param p1   parameter 1
      * @param p2   parameter 2
      * @param data command data field, or {@code null} for no data
+     * @param ne   expected response length from {@code CommandAPDU.getNe()}; 0 means no Le field
      */
-    public APDU(byte cla, byte ins, byte p1, byte p2, byte[] data) {
+    public APDU(byte cla, byte ins, byte p1, byte p2, byte[] data, int ne) {
         this.cla = cla;
         this.ins = ins;
         this.p1 = p1;
         this.p2 = p2;
-        this.le = 0;
-        this.sendLe = 0;
+        this.le = ne;
+        this.sendLe = (byte) (ne > 0 ? 1 : 0);
 
         if (data == null) {
             this.data = new byte[0];
@@ -58,6 +59,19 @@ class APDU extends DataStructure {
             this.data = Arrays.copyOf(data, Math.min(data.length, MAX_APDU_PAYLOAD_SIZE));
             this.lc = (short) data.length;
         }
+    }
+
+    /**
+     * Constructs a command APDU with no Le field.
+     *
+     * @param cla  class byte
+     * @param ins  instruction byte
+     * @param p1   parameter 1
+     * @param p2   parameter 2
+     * @param data command data field, or {@code null} for no data
+     */
+    public APDU(byte cla, byte ins, byte p1, byte p2, byte[] data) {
+        this(cla, ins, p1, p2, data, 0);
     }
 
     /**
