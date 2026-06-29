@@ -11,6 +11,7 @@ a port of the Python [smartleia](https://github.com/cw-leia/smartleia) library.
 - Send ISO 7816 APDUs and receive responses
 - APDU round-trip timing from the board's on-chip timer (microseconds)
 - Trigger strategy control for power-analysis measurements
+- `LeiaBIBO` adapter for `apdu4j`-based tools (e.g. GlobalPlatformPro applet installation)
 
 ## Requirements
 
@@ -51,6 +52,37 @@ System.out.printf("SW: %04X, round-trip: %d µs%n",
 
 tc.close();
 ```
+
+### GlobalPlatformPro integration (BIBO)
+
+`LeiaBIBO` implements the [`apdu4j` BIBO](https://github.com/martinpaljak/apdu4j) interface
+(`byte[] transceive(byte[]) / void close()`), which lets tools like
+[GlobalPlatformPro](https://github.com/martinpaljak/GlobalPlatformPro) use the LEIA board
+as a card I/O channel — for example to install or manage applets.
+
+`apdu4j-core` is a **provided** dependency: jleia compiles against it but does not bundle it.
+Add it to your project alongside jleia:
+
+```gradle
+// Gradle
+implementation 'com.github.martinpaljak:gptool:20.08.12'   // pulls in apdu4j-core transitively
+implementation files('path/to/jleia-0.1.0.jar')
+```
+
+Usage:
+
+```java
+TargetController tc = new TargetController();
+tc.open();
+tc.configureSmartcard(Protocol.T1, 0, 0, true, true);
+
+BIBO bibo = new LeiaBIBO(tc);
+int exitCode = new GPTool().run(bibo, new String[]{"--install", "MyApplet.cap"});
+// bibo.close() delegates to tc.close()
+bibo.close();
+```
+
+The `LeiaBIBO.close()` call closes the underlying serial port, so no separate `tc.close()` is needed after handing off to `LeiaBIBO`.
 
 ### Trigger strategies (for power-analysis profiling)
 
